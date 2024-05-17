@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="header">
+        <a href="index.html"><img src="imgs/logo22.png" class="logo"></a>
+        <ul class="desktop-navbar">
+            <li><a href="index.html" class="nav">Home</a></li>
+            <li><a href="about.html" class="nav">About</a></li>
+            <li><a href="contact.html" class="nav-active">Contact</a></li>
+        </ul>
+    </div>
+      
+    <h1 id="contxt">Contact Us</h1>
+    <img src="imgs/contact.png" class="contactimg">
+
+    <div class="Cform">
+        <form id="contactForm">
+            <input type="text" id="name" name="name" placeholder="Name" autocomplete="name" required>
+            <input type="email" id="email" name="email" placeholder="Email" autocomplete="email" required>
+            <textarea id="message" name="message" placeholder="Type Message..." style="height:150px" required></textarea>
+            <input type="submit" value="Send Message">
+        </form>
+    </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDcmSfKdyjAklgq5InbNcn8FM0YBhOVnC0",
+            authDomain: "fileco-466b9.firebaseapp.com",
+            projectId: "fileco-466b9",
+            storageBucket: "fileco-466b9.appspot.com",
+            messagingSenderId: "966698863982",
+            appId: "1:966698863982:web:5b2f6929bd9bfa7f79857f",
+            measurementId: "G-D64BQDS0W8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Sign in anonymously
+        signInAnonymously(auth).catch((error) => {
+            console.error('Error during sign-in:', error);
+        });
+
+        // Reference to the form
+        const contactForm = document.getElementById('contactForm');
+
+        // Listen for form submission
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Get form values
+            const name = contactForm['name'].value;
+            const email = contactForm['email'].value;
+            const message = contactForm['message'].value;
+
+            try {
+                // Save the form data to Firestore
+                const docRef = await addDoc(collection(db, 'contacts'), {
+                    name: name,
+                    email: email,
+                    message: message,
+                    timestamp: serverTimestamp()
+                });
+                console.log('Document written with ID: ', docRef.id);
+                alert('Message sent!');
+                // Clear the form
+                contactForm.reset();
+            } catch (error) {
+                console.error('Error saving message:', error);
+                alert('There was an error sending your message. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
